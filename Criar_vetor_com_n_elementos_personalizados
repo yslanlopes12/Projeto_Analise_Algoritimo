@@ -1,0 +1,19 @@
+--Java
+
+public class App {
+        public static void main(String[] args) {
+            // Criar um vetor com 5000.000 elementos
+            int[] vetor = new int[500000];
+    
+            // Preencher o vetor com valores crescentes
+            for (int i = 0; i < vetor.length; i++) {
+                vetor[i] = i + 1; // Valores de 1 a 5000.000
+            }
+    
+            // Imprimir os primeiros 10 elementos para verificar
+            System.out.println("Os elementos do vetor são:");
+            for (int i = 0; i < 500000; i++) {
+                System.out.print(vetor[i] + " ");
+            }
+        }
+    }
