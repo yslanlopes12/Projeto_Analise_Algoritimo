@@ -1,0 +1,282 @@
+--Código feito em Java--
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
+import java.lang.management.ThreadMXBean;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
+
+public class App {
+
+    // Algoritmos de Ordenação
+
+    // Bubble Sort
+    public static void bubbleSort(int[] arr) {
+        int n = arr.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    // Troca
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    // Merge Sort
+    public static void mergeSort(int[] arr) {
+        if (arr.length <= 1) {
+            return;
+        }
+        int mid = arr.length / 2;
+        int[] left = Arrays.copyOfRange(arr, 0, mid);
+        int[] right = Arrays.copyOfRange(arr, mid, arr.length);
+        mergeSort(left);
+        mergeSort(right);
+        merge(arr, left, right);
+    }
+
+    private static void merge(int[] arr, int[] left, int[] right) {
+        int i = 0, j = 0, k = 0;
+        while (i < left.length && j < right.length) {
+            if (left[i] <= right[j]) {
+                arr[k++] = left[i++];
+            } else {
+                arr[k++] = right[j++];
+            }
+        }
+        while (i < left.length) {
+            arr[k++] = left[i++];
+        }
+        while (j < right.length) {
+            arr[k++] = right[j++];
+        }
+    }
+
+    // Quick Sort
+    public static void quickSort(int[] arr, int low, int high) {
+        if (low < high) {
+            int pi = partition(arr, low, high);
+            quickSort(arr, low, pi - 1);
+            quickSort(arr, pi + 1, high);
+        }
+    }
+
+    private static int partition(int[] arr, int low, int high) {
+        int pivot = arr[high];
+        int i = (low - 1);
+        for (int j = low; j < high; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+        int temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+        return i + 1;
+    }
+
+    // Shell Sort
+    public static void shellSort(int[] arr) {
+        int n = arr.length;
+        for (int gap = n / 2; gap > 0; gap /= 2) {
+            for (int i = gap; i < n; i++) {
+                int temp = arr[i];
+                int j;
+                for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                    arr[j] = arr[j - gap];
+                }
+                arr[j] = temp;
+            }
+        }
+    }
+
+    // Geradores de Vetores
+
+    // Gerar vetor de inteiros ordenados crescentemente
+    public static int[] gerarVetorCrescente(int tamanho) {
+        int[] vetor = new int[tamanho];
+        for (int i = 0; i < tamanho; i++) {
+            vetor[i] = i + 1;
+        }
+        return vetor;
+    }
+
+    // Gerar vetor de inteiros ordenados decrescentemente
+    public static int[] gerarVetorDecrescente(int tamanho) {
+        int[] vetor = new int[tamanho];
+        for (int i = 0; i < tamanho; i++) {
+            vetor[i] = tamanho - i;
+        }
+        return vetor;
+    }
+
+    // Gerar vetor de inteiros aleatórios
+    public static int[] gerarVetorAleatorio(int tamanho) {
+        Random random = new Random();
+        int[] vetor = new int[tamanho];
+        for (int i = 0; i < tamanho; i++) {
+            vetor[i] = random.nextInt();
+        }
+        return vetor;
+    }
+
+    // Gerar vetor de palavras aleatórias (sem sentido)
+    public static String[] gerarVetorDePalavrasAleatorias(int tamanho) {
+        String[] vetor = new String[tamanho];
+        Random random = new Random();
+        String caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        for (int i = 0; i < tamanho; i++) {
+            int palavraLength = random.nextInt(5) + 3; // Tamanho da palavra entre 3 e 7
+            StringBuilder palavra = new StringBuilder();
+            for (int j = 0; j < palavraLength; j++) {
+                int index = random.nextInt(caracteres.length());
+                palavra.append(caracteres.charAt(index));
+            }
+            vetor[i] = palavra.toString();
+        }
+        return vetor;
+    }
+
+    // Método para medir o tempo de execução
+    public static long medirTempo(int[] vetor, Runnable algoritmo) {
+        long inicio = System.nanoTime();
+        algoritmo.run();
+        long fim = System.nanoTime();
+        return (fim - inicio) / 1000; // Converte para microsegundos
+    }
+
+    // Método para medir o tempo de execução para o vetor de strings
+    public static long medirTempoStrings(String[] vetor, Runnable algoritmo) {
+        long inicio = System.nanoTime();
+        algoritmo.run();
+        long fim = System.nanoTime();
+        return (fim - inicio) / 1000; // Converte para microsegundos
+    }
+
+    // Main para executar os algoritmos
+    public static void main(String[] args) {
+
+        // Testando os diferentes cenários e tamanhos
+        int[] vetorCrescente = gerarVetorCrescente(10000);
+        int[] vetorDecrescente = gerarVetorDecrescente(10000);
+        int[] vetorAleatorio = gerarVetorAleatorio(10000);
+        String[] vetorStrings = gerarVetorDePalavrasAleatorias(10000);
+
+        // Cenário 1: Vetor ordenado crescente
+        System.out.println("Cenário 1 - Vetor ordenado crescente, Tamanho: 10.000");
+        System.out.println(
+                "Bubble Sort: " + medirTempo(vetorCrescente, () -> bubbleSort(vetorCrescente)) + " microssegundos");
+        System.out.println(
+                "Merge Sort: " + medirTempo(vetorCrescente, () -> mergeSort(vetorCrescente)) + " microssegundos");
+        System.out.println("Quick Sort: "
+                + medirTempo(vetorCrescente, () -> quickSort(vetorCrescente, 0, vetorCrescente.length - 1))
+                + " microssegundos");
+        System.out.println(
+                "Shell Sort: " + medirTempo(vetorCrescente, () -> shellSort(vetorCrescente)) + " microssegundos");
+
+        // Cenário 2: Vetor ordenado decrescente
+        System.out.println("\nCenário 2 - Vetor ordenado decrescente, Tamanho: 10.000");
+        System.out.println(
+                "Bubble Sort: " + medirTempo(vetorDecrescente, () -> bubbleSort(vetorDecrescente)) + " microssegundos");
+        System.out.println(
+                "Merge Sort: " + medirTempo(vetorDecrescente, () -> mergeSort(vetorDecrescente)) + " microssegundos");
+        System.out.println("Quick Sort: "
+                + medirTempo(vetorDecrescente, () -> quickSort(vetorDecrescente, 0, vetorDecrescente.length - 1))
+                + " microssegundos");
+        System.out.println(
+                "Shell Sort: " + medirTempo(vetorDecrescente, () -> shellSort(vetorDecrescente)) + " microssegundos");
+
+        // Cenário 3: Vetor aleatório
+        System.out.println("\nCenário 3 - Vetor aleatório, Tamanho: 10.000");
+        System.out.println(
+                "Bubble Sort: " + medirTempo(vetorAleatorio, () -> bubbleSort(vetorAleatorio)) + " microssegundos");
+        System.out.println(
+                "Merge Sort: " + medirTempo(vetorAleatorio, () -> mergeSort(vetorAleatorio)) + " microssegundos");
+        System.out.println("Quick Sort: "
+                + medirTempo(vetorAleatorio, () -> quickSort(vetorAleatorio, 0, vetorAleatorio.length - 1))
+                + " microssegundos");
+        System.out.println(
+                "Shell Sort: " + medirTempo(vetorAleatorio, () -> shellSort(vetorAleatorio)) + " microssegundos");
+
+        // Cenário 4: Vetor de strings aleatórias
+        System.out.println("\nCenário 4 - Vetor de strings aleatórias, Tamanho: 10.000");
+        long start = System.nanoTime();
+        Arrays.sort(vetorStrings); // Usando Arrays.sort para ordenar as palavras
+        long end = System.nanoTime();
+        System.out.println("Arrays.sort: " + (end - start) / 1000 + " microssegundos");
+
+        // Informações detalhadas do sistema
+        exibirInformacoesDoSistema();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    public static void exibirInformacoesDoSistema() {
+        // Informações do Sistema Operacional
+        System.out.println("\nInformações do Sistema:");
+        System.out.println("Sistema operacional: " + System.getProperty("os.name"));
+        System.out.println("Versão do SO: " + System.getProperty("os.version"));
+        System.out.println("Arquitetura do SO: " + System.getProperty("os.arch"));
+
+        // Informações de CPU
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        System.out.println("Número de núcleos lógicos disponíveis para o Java: " + osBean.getAvailableProcessors());
+
+       //Windows
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
+            if (os.contains("windows")) {
+                // No Windows, você pode usar o comando 'wmic' para pegar informações sobre o
+                // processador
+                String[] command = { "wmic", "cpu", "get", "caption" };
+                Process process = Runtime.getRuntime().exec(command);
+                process.waitFor();
+                Scanner s = new Scanner(process.getInputStream());
+                String processorName = s.hasNext() ? s.nextLine().trim() : "Desconhecido";
+                System.out.println("Nome do Processador: " + processorName);
+            } else if (os.contains("linux") || os.contains("mac")) {
+                String[] command = { "lscpu" };
+                Process process = Runtime.getRuntime().exec(command);
+                process.waitFor();
+                Scanner s = new Scanner(process.getInputStream());
+                while (s.hasNextLine()) {
+                    String line = s.nextLine().toLowerCase();
+                    if (line.contains("model name") || line.contains("cpu")) {
+                        System.out.println("Nome do Processador: " + line.split(":")[1].trim());
+                    }
+                }
+            } else {
+                System.out.println("Nome do Processador: Não disponível");
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao recuperar informações do processador: " + e.getMessage());
+        }
+
+        // Memória RAM
+        MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heapMemoryUsage = memoryBean.getHeapMemoryUsage();
+        System.out.println("Memória Heap (usada): " + (heapMemoryUsage.getUsed() / (1024 * 1024)) + " MB");
+        System.out.println("Memória Heap (máxima): " + (heapMemoryUsage.getMax() / (1024 * 1024)) + " MB");
+
+        // Informações sobre a JVM
+        System.out.println(
+                "Tamanho da memória total (JVM): " + (Runtime.getRuntime().totalMemory() / (1024 * 1024)) + " MB");
+        System.out.println("Memória livre (JVM): " + (Runtime.getRuntime().freeMemory() / (1024 * 1024)) + " MB");
+
+        // Informações sobre Threads
+        ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+        System.out.println("Número de threads ativas: " + threadBean.getThreadCount());
+
+        // Número de núcleos físicos
+        System.out.println("Número de núcleos físicos (real): " + Runtime.getRuntime().availableProcessors());
+    }
+}
