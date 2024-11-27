@@ -1,4 +1,6 @@
---Java
+--Códigos feitos em Java--
+
+--Cenário 1: Vetor de inteiros ordenados de forma crescente--
 
 public class App {
         public static void main(String[] args) {
@@ -10,10 +12,109 @@ public class App {
                 vetor[i] = i + 1; // Valores de 1 a 5000.000
             }
     
-            // Imprimir os primeiros 10 elementos para verificar
+            // Imprimir os elementos para verificar
             System.out.println("Os elementos do vetor são:");
             for (int i = 0; i < 500000; i++) {
                 System.out.print(vetor[i] + " ");
             }
         }
     }
+
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+
+--Cenário 2: Vetor de inteiros ordenados de forma decrescente--
+
+public class App {
+    public static void main(String[] args) {
+        // Criar um vetor com 500.000 elementos
+        int[] vetor = new int[500000];
+
+        // Preencher o vetor com valores decrescentes
+        for (int i = 0; i < vetor.length; i++) {
+            vetor[i] = 500000 - i; // Valores de 500.000 a 1
+        }
+
+        // Imprimir os elementos para verificar
+        System.out.println("Os elementos do vetor são:");
+        for (int i = 0; i < 500000; i++) {
+            System.out.print(vetor[i] + " ");
+        }
+    }
+}
+
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+
+--Cenário 3: Vetor de inteiros aleatórios--
+
+import java.util.Random;
+
+public class App{
+    public static void main(String[] args) {
+        // Criar um vetor com 500.000 elementos
+        int[] vetor = new int[500000];
+
+        // Gerador de números aleatórios
+        Random random = new Random();
+
+        // Preencher o vetor com valores aleatórios
+        for (int i = 0; i < vetor.length; i++) {
+            vetor[i] = random.nextInt(); // Gera um número inteiro aleatório
+        }
+
+        // Imprimir todos os 500.000 elementos
+        for (int i = 0; i < vetor.length; i++) {
+            System.out.println(vetor[i]);
+        }
+        System.out.println("\nFim da Execução!\n");
+    }
+}
+
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+
+--Cenário 4: Vetor de strings (palavras) aleatórias--
+
+import java.util.Random;
+
+public class App {
+    public static void main(String[] args) {
+        // Criar um vetor com 500.000 strings
+        String[] vetor = new String[500000];
+
+        // Gerador de números aleatórios
+        Random random = new Random();
+
+        // Preencher o vetor com palavras aleatórias
+        for (int i = 0; i < vetor.length; i++) {
+            vetor[i] = gerarPalavraAleatoria(random, 3, 10); // Palavras de 3 a 10 caracteres
+        }
+
+        // Imprimir todas as palavras
+        for (String palavra : vetor) {
+            System.out.println(palavra);
+        }
+        System.out.println("\n--------------------------");
+        System.out.println("\nFim da Execução!\n");
+        System.out.println("--------------------------\n");
+    }
+
+    // Método para gerar uma palavra aleatória de tamanho entre min e max
+    public static String gerarPalavraAleatoria(Random random, int min, int max) {
+        int tamanho = random.nextInt(max - min + 1) + min; // Tamanho aleatório entre min e max
+        StringBuilder palavra = new StringBuilder();
+
+        for (int i = 0; i < tamanho; i++) {
+            // Gerar caracteres aleatórios (a-z)
+            char letra = (char) ('a' + random.nextInt(26));
+            palavra.append(letra);
+        }
+
+        return palavra.toString();
+    }
+
+}
+
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
