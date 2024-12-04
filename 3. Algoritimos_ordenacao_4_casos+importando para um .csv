@@ -1,0 +1,211 @@
+import java.util.Arrays;
+import java.util.Random;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
+
+public class App {
+
+    // Classe para armazenar os dados do benchmark
+    static class BenchmarkData {
+        String algoritmo;
+        String cenario;
+        long tempoExecucao;
+
+        BenchmarkData(String algoritmo, String cenario, long tempoExecucao) {
+            this.algoritmo = algoritmo;
+            this.cenario = cenario;
+            this.tempoExecucao = tempoExecucao;
+        }
+    }
+
+    // Algoritmos de Ordenação
+
+    // Bubble Sort
+    public static void bubbleSort(int[] arr) {
+        int n = arr.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    // Merge Sort
+    public static void mergeSort(int[] arr) {
+        if (arr.length <= 1) return;
+        int mid = arr.length / 2;
+        int[] left = Arrays.copyOfRange(arr, 0, mid);
+        int[] right = Arrays.copyOfRange(arr, mid, arr.length);
+        mergeSort(left);
+        mergeSort(right);
+        merge(arr, left, right);
+    }
+
+    private static void merge(int[] arr, int[] left, int[] right) {
+        int i = 0, j = 0, k = 0;
+        while (i < left.length && j < right.length) {
+            arr[k++] = (left[i] <= right[j]) ? left[i++] : right[j++];
+        }
+        while (i < left.length) arr[k++] = left[i++];
+        while (j < right.length) arr[k++] = right[j++];
+    }
+
+    // Quick Sort (Iterativo)
+    public static void quickSortIterativo(int[] arr) {
+        int n = arr.length;
+        int[] stack = new int[n];
+        int top = -1;
+
+        stack[++top] = 0;
+        stack[++top] = n - 1;
+
+        while (top >= 0) {
+            int high = stack[top--];
+            int low = stack[top--];
+
+            int pi = partition(arr, low, high);
+
+            if (pi - 1 > low) {
+                stack[++top] = low;
+                stack[++top] = pi - 1;
+            }
+
+            if (pi + 1 < high) {
+                stack[++top] = pi + 1;
+                stack[++top] = high;
+            }
+        }
+    }
+
+    private static int partition(int[] arr, int low, int high) {
+        int pivot = arr[high], i = (low - 1);
+        for (int j = low; j < high; j++) {
+            if (arr[j] <= pivot) {
+                int temp = arr[++i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+        int temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+        return i + 1;
+    }
+
+    // Shell Sort
+    public static void shellSort(int[] arr) {
+        int n = arr.length;
+        for (int gap = n / 2; gap > 0; gap /= 2) {
+            for (int i = gap; i < n; i++) {
+                int temp = arr[i], j;
+                for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                    arr[j] = arr[j - gap];
+                }
+                arr[j] = temp;
+            }
+        }
+    }
+
+    // Geradores de Vetores
+    public static int[] gerarVetorCrescente(int tamanho) {
+        int[] vetor = new int[tamanho];
+        for (int i = 0; i < tamanho; i++) vetor[i] = i + 1;
+        return vetor;
+    }
+
+    public static int[] gerarVetorDecrescente(int tamanho) {
+        int[] vetor = new int[tamanho];
+        for (int i = 0; i < tamanho; i++) vetor[i] = tamanho - i;
+        return vetor;
+    }
+
+    public static int[] gerarVetorAleatorio(int tamanho) {
+        Random random = new Random();
+        int[] vetor = new int[tamanho];
+        for (int i = 0; i < tamanho; i++) vetor[i] = random.nextInt();
+        return vetor;
+    }
+
+    // Medir tempo de execução
+    public static long medirTempo(int[] vetor, Runnable algoritmo) {
+        long inicio = System.nanoTime();
+        try {
+            algoritmo.run();
+        } catch (OutOfMemoryError e) {
+            System.err.println("Erro de memória ao executar algoritmo: " + e.getMessage());
+            return -1; // Retorna -1 se ocorrer um erro de memória
+        }
+        long fim = System.nanoTime();
+        return (fim - inicio) / 1000; // Retorna o tempo em microssegundos
+    }
+
+    // Salvar os resultados no arquivo CSV
+    public static void salvarResultadosCSV(List<BenchmarkData> resultados) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("resultados_benchmark.csv"))) {
+            writer.write("Algoritmo,Cenario,TempoExecucao\n");
+            for (BenchmarkData data : resultados) {
+                writer.write(data.algoritmo + "," + data.cenario + "," + data.tempoExecucao + "\n");
+            }
+            System.out.println("Resultados salvos em resultados_benchmark.csv");
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar os resultados: " + e.getMessage());
+        }
+    }
+
+    // Executar testes com N execuções
+    public static void executarTestes(int[] vetor, String nomeCenario, int numExecucoes, List<BenchmarkData> resultados) {
+        for (int i = 1; i <= numExecucoes; i++) {
+            System.out.println("\nExecução " + i + " - " + nomeCenario);
+
+            // Reutilizando os vetores e resetando-os
+            int[] vetorBubble = Arrays.copyOf(vetor, vetor.length);
+            int[] vetorMerge = Arrays.copyOf(vetor, vetor.length);
+            int[] vetorQuick = Arrays.copyOf(vetor, vetor.length);
+            int[] vetorShell = Arrays.copyOf(vetor, vetor.length);
+
+            long tempoBubble = medirTempo(vetorBubble, () -> bubbleSort(vetorBubble));
+            long tempoMerge = medirTempo(vetorMerge, () -> mergeSort(vetorMerge));
+            long tempoQuick = medirTempo(vetorQuick, () -> quickSortIterativo(vetorQuick));
+            long tempoShell = medirTempo(vetorShell, () -> shellSort(vetorShell));
+
+            if (tempoBubble != -1) resultados.add(new BenchmarkData("Bubble Sort", nomeCenario, tempoBubble));
+            if (tempoMerge != -1) resultados.add(new BenchmarkData("Merge Sort", nomeCenario, tempoMerge));
+            if (tempoQuick != -1) resultados.add(new BenchmarkData("Quick Sort", nomeCenario, tempoQuick));
+            if (tempoShell != -1) resultados.add(new BenchmarkData("Shell Sort", nomeCenario, tempoShell));
+
+            // Sugestão de coleta de lixo após cada execução para liberar memória
+            System.gc();
+        }
+    }
+
+    // Main
+    public static void main(String[] args) {
+        int numExecucoes = 1; // Reduzindo o número de execuções
+        int[] tamanhos = {500000}; // Tamanho menor para evitar sobrecarga de memória
+
+        List<BenchmarkData> resultados = new ArrayList<>();
+
+        for (int tamanho : tamanhos) {
+            System.out.println("Executando testes com vetor de tamanho " + tamanho);
+
+            int[] vetorCrescente = gerarVetorCrescente(tamanho);
+            int[] vetorDecrescente = gerarVetorDecrescente(tamanho);
+            int[] vetorAleatorio = gerarVetorAleatorio(tamanho);
+
+            System.out.println("Executando cenários de ordenação com " + numExecucoes + " execuções cada.");
+            executarTestes(vetorCrescente, "Cenário 1 - Vetor ordenado crescente", numExecucoes, resultados);
+            executarTestes(vetorDecrescente, "Cenário 2 - Vetor ordenado decrescente", numExecucoes, resultados);
+            executarTestes(vetorAleatorio, "Cenário 3 - Vetor aleatório", numExecucoes, resultados);
+        }
+
+        // Salvar os resultados no CSV
+        salvarResultadosCSV(resultados);
+    }
+}
