@@ -269,7 +269,7 @@ public class App {
 
     // Main
     public static void main(String[] args) {
-        int numExecucoes = 1; // Número de execuções
+        int numExecucoes = 30; // Número de execuções
         int[] tamanhos = {100000}; // Tamanho para o teste (ajustado para evitar sobrecarga de memória)
 
         List<BenchmarkData> resultados = new ArrayList<>();
